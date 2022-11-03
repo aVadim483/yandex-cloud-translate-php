@@ -1,0 +1,20 @@
+{
+    "name": "avadim/yandex-cloud-translate-php",
+    "description": "",
+    "keywords": [
+		"yandex",
+        "cloud",
+        "translator"
+    ],
+    "type": "library",
+    "homepage": "https://github.com/yandex-cloud-translate-php",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "avadim\\YandexCloud\\": "./src/YandexCloud"
+        }
+    },
+    "require": {
+        "php": "^7.4"
+    }
+}
