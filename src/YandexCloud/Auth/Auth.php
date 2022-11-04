@@ -7,6 +7,7 @@ class Auth
     public string $refreshTokenUrl = 'https://iam.api.cloud.yandex.net/iam/v1/tokens';
 
     private string $oAuthToken;
+    private array $tmpIamToken;
 
     private $cacheGetFunc = null;
     private $cachePutFunc = null;
@@ -51,11 +52,13 @@ class Auth
         throw new \RuntimeException('Cannot refresh YC IAM token');
     }
 
-
-    public function getIamToken()
+    /**
+     * @return string
+     */
+    public function getIamToken(): string
     {
-        $token = [];
-        if ($this->cacheGetFunc) {
+        $token = !empty($this->tmpIamToken) ? $this->tmpIamToken : [];
+        if ((empty($token['iamToken']) || ($token['timeExpiresAt'] > time())) && $this->cacheGetFunc) {
             $token = ($this->cacheGetFunc)();
         }
         if (empty($token['iamToken']) || ($token['timeExpiresAt'] > time())) {
@@ -78,6 +81,7 @@ class Auth
                 if ($this->cachePutFunc) {
                     ($this->cachePutFunc)($token, $ttl);
                 }
+                $this->tmpIamToken = $token;
 
                 return $token['iamToken'];
             }

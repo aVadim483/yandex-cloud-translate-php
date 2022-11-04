@@ -169,7 +169,7 @@ class Translator
         if ($htmlText) {
             $postData['format'] = 'HTML';
         }
-        foreach($texts as $text) {
+        foreach($postData['texts'] as $text) {
             $this->symbolsCount += mb_strlen($text);
         }
 
