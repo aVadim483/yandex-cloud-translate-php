@@ -108,7 +108,7 @@ class Translator
             throw new \RuntimeException('YC translate error. CURL error: ' . $error);
         }
         if (!empty($info['http_code']) && $info['http_code'] !== 200) {
-            throw new \RuntimeException('YC translate error. Response HTTP code: ' . $info['http_code']);
+            throw new \RuntimeException('YC translate error. Response HTTP code: ' . $info['http_code'] . '. Response text: "' . $response . '"');
         }
         if (empty($response)) {
             throw new \RuntimeException('YC translate error. Empty result, HTTP code ' . $info['http_code']);
