@@ -96,12 +96,25 @@ class Translator
         ]);
         $time = microtime(true);
         $response = curl_exec($curl);
+        $error = (curl_errno($curl) ? curl_error($curl) : '');
+        $info = curl_getinfo($curl);
+        curl_close($curl);
+
         $this->addToLog(['response_time' => microtime(true) - $time, 'response' => $response]);
 
-        curl_close($curl);
         $this->requestsCount++;
 
-        if (!empty($response) && $resultData = json_decode($response, true)) {
+        if ($error) {
+            throw new \RuntimeException('YC translate error. CURL error: ' . $error);
+        }
+        if (!empty($info['http_code']) && $info['http_code'] !== 200) {
+            throw new \RuntimeException('YC translate error. Response HTTP code: ' . $info['http_code']);
+        }
+        if (empty($response)) {
+            throw new \RuntimeException('YC translate error. Empty result, HTTP code ' . $info['http_code']);
+        }
+
+        if ($resultData = json_decode($response, true)) {
             if (!empty($resultData['error']['message'])) {
                 throw new \RuntimeException('YC translate error: ' . $resultData['error']['message']);
             }
