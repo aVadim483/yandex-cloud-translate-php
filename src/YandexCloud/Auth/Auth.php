@@ -6,11 +6,13 @@ class Auth
 {
     public string $refreshTokenUrl = 'https://iam.api.cloud.yandex.net/iam/v1/tokens';
 
-    private string $oAuthToken;
+    private ?string $oAuthToken;
     private array $tmpIamToken;
 
     private $cacheGetFunc = null;
     private $cachePutFunc = null;
+
+    private ?string $apiKey = null;
 
 
     public function __construct($oAuthToken, $cacheGetFunc = null, $cachePutFunc = null)
@@ -22,6 +24,16 @@ class Auth
         if ($cachePutFunc) {
             $this->cachePutFunc = $cachePutFunc;
         }
+    }
+
+    public function setApiKey($apiKey)
+    {
+        $this->apiKey = $apiKey;
+    }
+
+    public function getApiKey(): ?string
+    {
+        return $this->apiKey;
     }
 
     /**
@@ -64,6 +76,9 @@ class Auth
         if (empty($token['iamToken']) || ($token['timeExpiresAt'] > time())) {
             $token = $this->refreshIamToken();
 
+            if (isset($token['code'], $token['message']) && $token['code'] === 16) {
+                throw new \RuntimeException($token['message']);
+            }
             if ($token) {
                 if (preg_match('/^(.+)T(.+)\.(\d+)/', $token['expiresAt'], $m)) {
                     $d = \DateTime::createFromFormat('Y-m-d H:i:s.u', $m[1] . ' ' . $m[2] . '.' . substr($m[3], 0, 6));

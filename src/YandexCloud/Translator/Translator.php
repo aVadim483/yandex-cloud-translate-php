@@ -60,6 +60,14 @@ class Translator
      */
     protected function getHeaders(): array
     {
+        $apiKey = $this->auth->getApiKey();
+        if ($apiKey) {
+            return [
+                'Content-Type: application/json',
+                'X-Client-Request-ID: ' . Auth::makeUuid(),
+                'Authorization: Api-Key ' . $apiKey,
+            ];
+        }
         $token = $this->auth->getIamToken();
         return [
             'Content-Type: application/json',
