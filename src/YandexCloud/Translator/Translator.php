@@ -11,6 +11,7 @@ class Translator
 
     private Auth $auth;
     private string $folderId;
+    private ?string $apiKey = null;
 
     private float $lastRequestTime = 0.0;
     private int $symbolsCount = 0;
@@ -27,6 +28,11 @@ class Translator
             'languages' => 'https://translate.api.cloud.yandex.net/translate/v2/languages',
             'translate' => 'https://translate.api.cloud.yandex.net/translate/v2/translate',
         ];
+    }
+
+    public function useApiKey($apiKey)
+    {
+        $this->apiKey = $apiKey;
     }
 
     /**
@@ -60,7 +66,12 @@ class Translator
      */
     protected function getHeaders(): array
     {
-        $apiKey = $this->auth->getApiKey();
+        if ($this->apiKey) {
+            $apiKey = $this->apiKey;
+        }
+        else {
+            $apiKey = $this->auth->getApiKey();
+        }
         if ($apiKey) {
             return [
                 'Content-Type: application/json',

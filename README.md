@@ -43,9 +43,15 @@ var_dump($tr->getStats());
 * Задайте описание ключа, чтобы потом было проще найти его в консоли управления.
 
 ```php
+// 1st way
 $ya = new avadim\YandexCloud\Auth\Auth(null);
 $ya->setApiKey($apiKey);
 $tr = new \avadim\YandexCloud\Translator\Translator($ya, $folderId);
+
+// 2nd way
+$ya = new avadim\YandexCloud\Auth\Auth(null);
+$tr = new \avadim\YandexCloud\Translator\Translator($ya, $folderId);
+$tr->useApiKey($apiKey);
 
 var_dump($tr->translate('<span>красная</span> корова', 'en', null, true));
 var_dump($tr->getStats());

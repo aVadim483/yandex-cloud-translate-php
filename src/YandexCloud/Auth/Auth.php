@@ -65,9 +65,9 @@ class Auth
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getIamToken(): string
+    public function getIamToken(): ?string
     {
         $token = !empty($this->tmpIamToken) ? $this->tmpIamToken : [];
         if ((empty($token['iamToken']) || ($token['timeExpiresAt'] > time())) && $this->cacheGetFunc) {
@@ -98,7 +98,7 @@ class Auth
                 }
                 $this->tmpIamToken = $token;
 
-                return $token['iamToken'];
+                return $token['iamToken'] ?? null;
             }
         }
 
